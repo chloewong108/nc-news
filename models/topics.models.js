@@ -9,10 +9,9 @@ exports.selectTopics = () => {
 
 exports.selectArticleId = (id) => {
   return db
-    .query(
-      `SELECT articles.* FROM articles JOIN users ON users.username = articles.author WHERE articles.article_id = $1;`,
-      [id]
-    )
+    .query(`SELECT articles.* FROM articles WHERE articles.article_id = $1`, [
+      id,
+    ])
     .then(({ rows: [response] }) => {
       if (!response) {
         return Promise.reject({
