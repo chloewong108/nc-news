@@ -96,7 +96,7 @@ describe("/api/articles/:article_id", () => {
           expect(body.article.votes).toBe(101);
         });
     });
-    test("400: Responds with bad request if article_id is invalid ", () => {
+    test("400: Responds with bad request if the input of the votes is not of the correct data type", () => {
       const patchRequest = { inc_votes: "hello" };
       return request(app)
         .patch("/api/articles/1")
