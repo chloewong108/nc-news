@@ -84,3 +84,47 @@ describe("/api/users", () => {
     });
   });
 });
+describe("/api/articles/:article_id", () => {
+  describe("PATCH", () => {
+    test("200: Updates the votes property with specified amount and responds with the updated article ", () => {
+      const patchRequest = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(patchRequest)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.votes).toBe(101);
+        });
+    });
+    test("400: Responds with bad request if the input of the votes is not of the correct data type", () => {
+      const patchRequest = { inc_votes: "hello" };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(patchRequest)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("400: Responds with a bad request if article_id input is of invalid data type", () => {
+      const patchRequest = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/bananas")
+        .send(patchRequest)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("404: Responds with does not exist when client enters a article_id that does not exist", () => {
+      const patchRequest = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1000000")
+        .send(patchRequest)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 404: does not exist");
+        });
+    });
+  });
+});
