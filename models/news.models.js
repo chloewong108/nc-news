@@ -58,9 +58,6 @@ exports.selectAllArticles = (topic) => {
   queryString += ` GROUP BY articles.article_id`;
   queryString += ` ORDER BY created_at desc`;
   return db.query(queryString, queryValues).then((response) => {
-    // if (response.rows.length === 0) {
-    //   return Promise.reject({ status: 404, msg: "error 404: does not exist" });
-    // }
     return response.rows;
   });
 };
