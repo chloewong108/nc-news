@@ -144,7 +144,6 @@ describe("/api/articles", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(Array.isArray(body.articles)).toBe(true);
           expect(body.articles).toHaveLength(12);
           body.articles.forEach((article) => {
             expect(article).toHaveProperty("author", expect.any(String));
