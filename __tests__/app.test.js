@@ -137,3 +137,52 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
+describe("/api/articles", () => {
+  describe("GET", () => {
+    test("200: Responds with array of article objects with its properties", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles).toHaveLength(12);
+          body.articles.forEach((article) => {
+            expect(article).toHaveProperty("author", expect.any(String));
+            expect(article).toHaveProperty("title", expect.any(String));
+            expect(article).toHaveProperty("article_id", expect.any(Number));
+            expect(article).toHaveProperty("topic", expect.any(String));
+            expect(article).toHaveProperty("created_at", expect.any(String));
+            expect(article).toHaveProperty("votes", expect.any(Number));
+            expect(article).toHaveProperty("comment_count", expect.any(Number));
+          });
+        });
+    });
+    test("200: Responds with array of articles objects sorted in descending order by date", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    test("200: Accepts an existing topic query which sorts the articles by default order (descending)", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body.articles);
+          expect(body.articles).toBeSortedBy("cats", { descending: true });
+        });
+    });
+    test("400: Responds with an empty array if the topic query does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=apples")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toEqual([]);
+        });
+    });
+  });
+});
