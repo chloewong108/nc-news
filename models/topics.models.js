@@ -9,9 +9,14 @@ exports.selectTopics = () => {
 
 exports.selectArticleId = (id) => {
   return db
-    .query(`SELECT articles.* FROM articles WHERE articles.article_id = $1`, [
-      id,
-    ])
+    .query(
+      `SELECT articles.*, COUNT(comment_id) AS comment_count
+        FROM articles 
+        LEFT JOIN comments ON comments.article_id = articles.article_id 
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;`,
+      [id]
+    )
     .then(({ rows: [response] }) => {
       if (!response) {
         return Promise.reject({

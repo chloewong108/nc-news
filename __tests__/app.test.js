@@ -45,7 +45,16 @@ describe("/api/articles/:article_id", () => {
             body: "I find this existence challenging",
             created_at: expect.any(String),
             votes: 100,
+            comment_count: "11",
           });
+        });
+    });
+    test("200: Responds with new property of comment_count which has the correct number of comments by article_id", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.comment_count).toBe("11");
         });
     });
     test("404: Responds with does not exist if article_id does not exist", () => {
