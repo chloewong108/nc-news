@@ -172,7 +172,6 @@ describe("/api/articles", () => {
         .get("/api/articles?topic=cats")
         .expect(200)
         .then(({ body }) => {
-          console.log(body.articles);
           expect(body.articles).toBeSortedBy("cats", { descending: true });
         });
     });
