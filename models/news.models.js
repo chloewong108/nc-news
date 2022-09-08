@@ -45,3 +45,19 @@ exports.updatedArticle = (id, votes) => {
     return response.rows[0];
   });
 };
+
+exports.selectAllArticles = (topic) => {
+  let queryString = `SELECT articles.*, COUNT(comment_id)::INT AS comment_count
+  FROM articles 
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
+  let queryValues = [];
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+  queryString += ` GROUP BY articles.article_id`;
+  queryString += ` ORDER BY created_at desc`;
+  return db.query(queryString, queryValues).then((response) => {
+    return response.rows;
+  });
+};

@@ -3,7 +3,8 @@ const {
   selectArticleId,
   selectUsers,
   updatedArticle,
-} = require("../models/topics.models");
+  selectAllArticles,
+} = require("../models/news.models");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -38,6 +39,17 @@ exports.patchUsers = (req, res, next) => {
   updatedArticle(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getAllArticles = (req, res, next) => {
+  const { topic } = req.query;
+  selectAllArticles(topic)
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);
