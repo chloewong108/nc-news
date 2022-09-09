@@ -249,6 +249,18 @@ describe("/api/articles/:article_id/comments", () => {
             comment_id: expect.any(Number),
             created_at: expect.any(String),
           });
+          return db
+            .query("SELECT * FROM comments WHERE article_id = 2;")
+            .then((response) => {
+              expect(response.rows[0]).toEqual({
+                body: "coolio",
+                votes: 0,
+                author: "butter_bridge",
+                article_id: 2,
+                comment_id: expect.any(Number),
+                created_at: expect.any(Object),
+              });
+            });
         });
     });
     test("400: Responds with bad request if article_id is invalid", () => {
@@ -282,6 +294,15 @@ describe("/api/articles/:article_id/comments", () => {
       return request(app)
         .post("/api/articles/1000/comments")
         .send({ username: "butter_bridge", body: "coolio" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 404: does not exist.");
+        });
+    });
+    test("404: Responds with does not exist if user does not exist", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({ username: "me", body: "hello" })
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("error 404: does not exist.");

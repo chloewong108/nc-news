@@ -34,6 +34,12 @@ app.use((err, req, res, next) => {
     res.status(400).send({ msg: "error 400: bad request." });
   } else next(err);
 });
+
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "error 404: does not exist." });
+  } else next(err);
+});
 app.use((err, req, res, next) => {
   console.log(err);
   res.status(500).send({ msg: "Internal Server Error" });
