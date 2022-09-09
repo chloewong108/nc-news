@@ -232,3 +232,60 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("POST", () => {
+    test("201: Should take a username and body property and respond with the posted comment", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({ username: "butter_bridge", body: "coolio" })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            body: "coolio",
+            votes: 0,
+            author: "butter_bridge",
+            article_id: 2,
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+    });
+    test("400: Responds with bad request if article_id is invalid", () => {
+      return request(app)
+        .post("/api/articles/applepie/comments")
+        .send({ username: "butter_bridge", body: "coolio" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("400: Responds with a bad request if no username is inputted", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({ username: "", body: "coolio" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("400: Responds with bad request if no body is inputted", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({ username: "butter_bridge", body: "" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("404: Responds with does not exist if article_id does not exist", () => {
+      return request(app)
+        .post("/api/articles/1000/comments")
+        .send({ username: "butter_bridge", body: "coolio" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 404: does not exist.");
+        });
+    });
+  });
+});
