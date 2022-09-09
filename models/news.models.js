@@ -1,5 +1,6 @@
 const db = require("../db/connection");
 const format = require("pg-format");
+const { response } = require("../app");
 
 exports.selectTopics = () => {
   return db.query("SELECT * FROM topics;").then((response) => {
@@ -60,4 +61,26 @@ exports.selectAllArticles = (topic) => {
   return db.query(queryString, queryValues).then((response) => {
     return response.rows;
   });
+};
+
+exports.selectAllComments = (id) => {
+  return db
+    .query("SELECT * FROM comments WHERE article_id = $1;", [id])
+    .then((response) => {
+      if (response.rows.length === 0) {
+        return db
+          .query("SELECT * FROM articles WHERE article_id = $1;", [id])
+          .then((result) => {
+            if (result.rows.length > 0) {
+              return response.rows;
+            }
+            return Promise.reject({
+              status: 404,
+              msg: "error 404: does not exist.",
+            });
+          });
+      }
+
+      return response.rows;
+    });
 };

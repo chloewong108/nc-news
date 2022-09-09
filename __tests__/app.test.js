@@ -184,3 +184,51 @@ describe("/api/articles", () => {
     });
   });
 });
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("200: Responds with an array of all comments when given the article_id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments.length).toBe(11);
+          body.comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                article_id: 1,
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: Responds with an empty articles array when no comments are found with an existing article_id", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
+    test("400: Responds with a bad request if article_id is invalid/of the wrong data type", () => {
+      return request(app)
+        .get("/api/articles/applebottomjeans/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("404: Responds with does not exist if article_id does not exist", () => {
+      return request(app)
+        .get("/api/articles/10000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 404: does not exist.");
+        });
+    });
+  });
+});
