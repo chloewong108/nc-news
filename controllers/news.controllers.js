@@ -5,6 +5,7 @@ const {
   updatedArticle,
   selectAllArticles,
   selectAllComments,
+  addComment,
 } = require("../models/news.models");
 
 exports.getTopics = (req, res) => {
@@ -62,6 +63,21 @@ exports.getAllCommentsById = (req, res, next) => {
   selectAllComments(article_id)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+  selectArticleId(article_id)
+    .then((response) => {
+      return addComment(article_id, body, username);
+    })
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch((err) => {
       next(err);

@@ -6,6 +6,7 @@ const {
   patchUsers,
   getAllArticles,
   getAllCommentsById,
+  postComment,
 } = require("./controllers/news.controllers");
 const app = express();
 
@@ -19,6 +20,8 @@ app.get("/api/articles/:article_id/comments", getAllCommentsById);
 
 app.patch("/api/articles/:article_id", patchUsers);
 
+app.post("/api/articles/:article_id/comments", postComment);
+
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
@@ -29,6 +32,12 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ msg: "error 400: bad request." });
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "error 404: does not exist." });
   } else next(err);
 });
 app.use((err, req, res, next) => {

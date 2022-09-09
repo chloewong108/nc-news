@@ -84,3 +84,17 @@ exports.selectAllComments = (id) => {
       return response.rows;
     });
 };
+
+exports.addComment = (id, body, username) => {
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: "error 400: bad request." });
+  }
+  return db
+    .query(
+      "INSERT INTO comments (article_id, body, author) VALUES ($1, $2, $3) RETURNING *;",
+      [id, body, username]
+    )
+    .then((response) => {
+      return response.rows[0];
+    });
+};
