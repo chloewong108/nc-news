@@ -8,6 +8,7 @@ const {
   addComment,
   removeCommentById,
 } = require("../models/news.models");
+const endpoints = require("../endpoints.json");
 
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -68,6 +69,9 @@ exports.getAllCommentsById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+exports.getApi = (req, res, next) => {
+  res.status(200).send({ endpoints });
 };
 
 exports.postComment = (req, res, next) => {
