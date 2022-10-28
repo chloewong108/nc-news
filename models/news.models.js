@@ -47,7 +47,16 @@ exports.updatedArticle = (id, votes) => {
   });
 };
 
-exports.selectAllArticles = (topic) => {
+exports.selectAllArticles = (
+  sort_by = "created_at",
+  order_by = "desc",
+  topic
+) => {
+  const validSortBy = ["title", "topic", "author", "created_at", "votes"];
+  const validOrders = ["desc", "asc"];
+  if (!validOrders.includes(order_by) || !validSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "error 400: bad request" });
+  }
   let queryString = `SELECT articles.*, COUNT(comment_id)::INT AS comment_count
   FROM articles 
   LEFT JOIN comments ON comments.article_id = articles.article_id`;
@@ -56,8 +65,8 @@ exports.selectAllArticles = (topic) => {
     queryString += ` WHERE topic = $1`;
     queryValues.push(topic);
   }
-  queryString += ` GROUP BY articles.article_id`;
-  queryString += ` ORDER BY created_at desc`;
+  queryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`;
+
   return db.query(queryString, queryValues).then((response) => {
     return response.rows;
   });

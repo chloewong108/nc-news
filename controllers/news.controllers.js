@@ -48,8 +48,8 @@ exports.patchUsers = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const { topic } = req.query;
-  selectAllArticles(topic)
+  const { sort_by, order_by, topic } = req.query;
+  selectAllArticles(sort_by, order_by, topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
