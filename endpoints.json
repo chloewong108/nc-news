@@ -1,17 +1,30 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Serves up a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/users": {
+    "description": "Serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "lurker",
+          "name": "do_nothing",
+          "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+        }
+      ]
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order_by"],
     "exampleResponse": {
       "articles": [
         {
@@ -19,9 +32,88 @@
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": 1527695953341,
+          "votes": 0
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Serves a single article object based on the article_id given",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 1,
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "votes": 100,
+          "comment_count": 11
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array of all comments for an article based on a given article_id",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "body": "I hate streaming eyes even more",
+        "votes": 0,
+        "author": "icellusedkars",
+        "article_id": 1,
+        "created_at": 1586642520000
+      }
+    ]
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Serves an object article matching the id with the updated vote value when passed an object of inc_vote property",
+    "queries": [],
+    "exampleResponse": {
+      "exampleRequest": {
+        "inc_vote": 1
+      },
+      "PATCH /api/articles/1": {
+        "article": {
+          "article_id": 1,
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "votes": 101
+        }
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Adds a new comment to an existing article based on article_id",
+    "queries": [],
+    "exampleResponse": {
+      "exampleRequest": {
+        "username": "butter_bridge",
+        "body": "I like borgirs"
+      },
+      "POST /api/articles/1/comments": {
+        "comment": [
+          {
+            "comment_id": 99,
+            "body": "I like borgirs",
+            "votes": "0",
+            "author": "butter_bridge",
+            "article_id": 1,
+            "created_at": "2020-07-09T20:11:00.000Z"
+          }
+        ]
+      }
+    }
+  },
+  "DELETE /api/comment/:comment_id": {
+    "description": "Removes a comment based on the comment_id",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
