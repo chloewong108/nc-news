@@ -137,7 +137,7 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
-describe("/api/articles", () => {
+describe.only("/api/articles (queries)", () => {
   describe("GET", () => {
     test("200: Responds with array of article objects with its properties", () => {
       return request(app)
@@ -174,6 +174,42 @@ describe("/api/articles", () => {
           expect(body.articles).toBeSortedBy("cats", { descending: true });
         });
     });
+    test("200: Returns an array of all article objects sorted by title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("200: Should return an array of all article objects sorted by created_at in ascending order", () => {
+      return request(app)
+        .get("/api/articles?order_by=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: false,
+          });
+        });
+    });
+    test("200: Should return an array of all article objects when passed 2 queries", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&order_by=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("title", { descending: false });
+        });
+    });
+    test("200: Should return an array of article objects of only the passed topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((article) => {
+            expect(article.topic).toBe("cats");
+          });
+        });
+    });
     test("400: Responds with an empty array if the topic query does not exist", () => {
       return request(app)
         .get("/api/articles?topic=apples")
@@ -182,6 +218,22 @@ describe("/api/articles", () => {
           expect(body.articles).toEqual([]);
         });
     });
+  });
+  test("400: Responds with bad request when passed an invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=aubergine")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("error 400: bad request");
+      });
+  });
+  test("400: Responds with bad request when passed an invalid order_by query", () => {
+    return request(app)
+      .get("/api/articles?order_by=cringe")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("error 400: bad request");
+      });
   });
 });
 describe("/api/articles/:article_id/comments", () => {
