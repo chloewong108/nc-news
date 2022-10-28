@@ -137,7 +137,7 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
-describe.only("/api/articles (queries)", () => {
+describe("/api/articles (queries)", () => {
   describe("GET", () => {
     test("200: Responds with array of article objects with its properties", () => {
       return request(app)
@@ -358,6 +358,34 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("error 404: does not exist.");
+        });
+    });
+  });
+});
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("204: Deletes a comment when passed a valid id", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+    test("400: Responds with bad request if comment_id is invalid", () => {
+      return request(app)
+        .delete("/api/comments/what")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 400: bad request.");
+        });
+    });
+    test("404: Responds with not found if comment_id does not exist", () => {
+      return request(app)
+        .delete("/api/comments/1010101010")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("error 404: not found");
         });
     });
   });
