@@ -184,7 +184,7 @@ describe("/api/articles (queries)", () => {
     });
     test("200: Should return an array of all article objects sorted by created_at in ascending order", () => {
       return request(app)
-        .get("/api/articles?order_by=asc")
+        .get("/api/articles?order=asc")
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toBeSortedBy("created_at", {
@@ -194,7 +194,7 @@ describe("/api/articles (queries)", () => {
     });
     test("200: Should return an array of all article objects when passed 2 queries", () => {
       return request(app)
-        .get("/api/articles?sort_by=title&order_by=asc")
+        .get("/api/articles?sort_by=title&order=asc")
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toBeSortedBy("title", { descending: false });
@@ -229,7 +229,7 @@ describe("/api/articles (queries)", () => {
   });
   test("400: Responds with bad request when passed an invalid order_by query", () => {
     return request(app)
-      .get("/api/articles?order_by=cringe")
+      .get("/api/articles?order=cringe")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("error 400: bad request");

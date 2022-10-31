@@ -47,14 +47,10 @@ exports.updatedArticle = (id, votes) => {
   });
 };
 
-exports.selectAllArticles = (
-  sort_by = "created_at",
-  order_by = "desc",
-  topic
-) => {
+exports.selectAllArticles = (sort_by = "created_at", order = "desc", topic) => {
   const validSortBy = ["title", "topic", "author", "created_at", "votes"];
   const validOrders = ["desc", "asc"];
-  if (!validOrders.includes(order_by) || !validSortBy.includes(sort_by)) {
+  if (!validOrders.includes(order) || !validSortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "error 400: bad request" });
   }
   let queryString = `SELECT articles.*, COUNT(comment_id)::INT AS comment_count
@@ -65,7 +61,7 @@ exports.selectAllArticles = (
     queryString += ` WHERE topic = $1`;
     queryValues.push(topic);
   }
-  queryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`;
+  queryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
 
   return db.query(queryString, queryValues).then((response) => {
     return response.rows;
