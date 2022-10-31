@@ -227,7 +227,7 @@ describe("/api/articles (queries)", () => {
         expect(body.msg).toBe("error 400: bad request");
       });
   });
-  test("400: Responds with bad request when passed an invalid order_by query", () => {
+  test("400: Responds with bad request when passed an invalid order query", () => {
     return request(app)
       .get("/api/articles?order=cringe")
       .expect(400)
