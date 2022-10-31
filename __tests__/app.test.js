@@ -184,7 +184,7 @@ describe("/api/articles (queries)", () => {
     });
     test("200: Should return an array of all article objects sorted by created_at in ascending order", () => {
       return request(app)
-        .get("/api/articles?order=asc")
+        .get("/api/articles?order=ASC")
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toBeSortedBy("created_at", {
@@ -194,7 +194,7 @@ describe("/api/articles (queries)", () => {
     });
     test("200: Should return an array of all article objects when passed 2 queries", () => {
       return request(app)
-        .get("/api/articles?sort_by=title&order=asc")
+        .get("/api/articles?sort_by=title&order=ASC")
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toBeSortedBy("title", { descending: false });
