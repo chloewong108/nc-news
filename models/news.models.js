@@ -48,7 +48,14 @@ exports.updatedArticle = (id, votes) => {
 };
 
 exports.selectAllArticles = (sort_by = "created_at", order = "DESC", topic) => {
-  const validSortBy = ["title", "topic", "author", "created_at", "votes"];
+  const validSortBy = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
   const validOrders = ["DESC", "ASC"];
   if (!validOrders.includes(order) || !validSortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "error 400: bad request" });
